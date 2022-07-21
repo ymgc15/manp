@@ -7,6 +7,12 @@
  <title>あいうえお</title>
 </head>
 <body>
- <h1>あいうえお</h1>
+  スタッフ追加<br>
+
+  <form method="post" action="staff_add_check.php">
+   やまぐち<br>
+   <input type="text" name="name" style="width:200px"><br>
+   1234<br>
+  </form>
 </body>
 </html>
