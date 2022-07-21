@@ -11,7 +11,7 @@
 <body>
   test2
   <?php
-  print "hello";
+  print "hello world";
   ?><br>
   <input type="submit">
 </body>
