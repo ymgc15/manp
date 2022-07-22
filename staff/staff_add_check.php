@@ -44,7 +44,7 @@
       print '<input type="hidden" name="name" value="'.$staff_name.'">';
       print '<input type="hidden" name="pass" value="'.$staff_pass.'">';
       print '<br>';
-      print '<input type="button" name="name" value="戻る">';
+      print '<input type="button" onclick="history.back()" value="戻る">';
       print '<input type="submit" value="ＯＫ">';
       print '</form>';
     }
