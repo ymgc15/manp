@@ -17,6 +17,10 @@
     // ②データベースエンジンにSQL文で指令を出す
     // ③データベースから切断する
     try {
+      // スタッフコードを受け取る (そのコードのスタッフデータを修正するため)
+      // テキストボックスからの入力ではないため、あえて安全対策はしない。
+      $staff_code = $_POST['staffcode'];
+
       // データベースに接続 ①
       // 'mysql:~utf8'のシングルクォーテーションで括った中には、一切スペースを入れないこと
       $dsn = 'mysql:dbname=shop;host=localhost;charset=utf8';
@@ -28,42 +32,21 @@
       // PDO::ERRMODE_EXCEPTION 例外を発生 (PDO::ATTR_ERRMODEの既定値)
       $dbh -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-      // SQL文で指令 ②
+      // SQL文を使って、そのスタッフコードのデータをデータベースから取得 ②
       // 以下は「プリペアードステートメント」と呼ばれる方式
-      // SELECT文 「mst_staffテーブルからスタッフコードと、nameカラムとのデータ(つまりスタッフ名)を全部ください」という指令
-      // WHERE 「どういうふうに？」 (「1」は「全部」という意味)
-      $sql = 'SELECT code,name FROM mst_staff WHERE 1';
+      // スタッフコードで絞り込んでいて、1件のレコードに絞り込まれるため、この後whileループで回すようなことはしない
+      $sql = 'SELECT name FROM mst_staff WHERE code = ?';
       $stmt = $dbh -> prepare($sql);
-      // この命令が終わった時点で、$stmtの中には全てのデータが入っている
-      $stmt -> execute();
+      $data[] = $staff_code;
+      $stmt -> execute($data);
+
+      $rec = $stmt -> fetch(PDO::FETCH_ASSOC);
+      // スタッフ名を変数にコピー。この後使用する
+      $staff_name = $rec['name'];
 
       // データベースから切断 ③
       $dbh = null;
 
-      print 'スタッフ一覧<br><br>';
-
-      // 修正画面に飛ぶ
-      print '<form method = "post" action = "staff_edit.php">';
-
-      // スタッフの名前を$stmtから1レコードずつ取り出しながら表示。レコードがなくなったらループから脱出
-      while(true) {
-        // $stmtから1レコード取り出している
-        $rec = $stmt -> fetch(PDO::FETCH_ASSOC);
-        // もし、もうデータがなければループから脱出
-        if($rec == false) {
-          break;
-        }
-        // ラジオボタンでスタッフを選べるようにした
-        // どのスタッフを選んだかを飛び先で分かるように、スタッフコードを渡している
-        print '<input type = "radio" name = "staffcode" value = "'.$rec['code'].'">';
-        // 名前を表示
-        print $rec['name'];
-        print '<br>';
-      }
-
-      // 修正ボタンを表示
-      print '<input type = "submit" value = "修正">';
-      print '</form>';
     }
 
     catch(Exception $e) {
@@ -72,6 +55,29 @@
     }
 
   ?>
+
+  スタッフ修正<br>
+  <br>
+  スタッフコード<br>
+  <?php print $staff_code; ?>
+  <br>
+  <br>
+
+  <form method="post" action="staff_edit_check.php">
+    <input type="hidden" name="code" value="<?php print $staff_code; ?>">
+
+    スタッフ名<br>
+    <!-- ?php print $staff_name; ?"の部分で名前を既に入力済みにしている -->
+    <input type="text" name="name" style="width:200px" value="<?php print $staff_name; ?>"><br>
+    パスワードを入力してください。<br>
+    <input type="password" name="pass" style="width:100px"><br>
+    パスワードをもう一度入力してください。<br>
+    <input type="password" name="pass2" style="width:100px"><br>
+    <br>
+
+    <input type="button" onclick = "history.back()" value="戻る">
+    <input type="submit" value="ＯＫ">
+  </form>
 
 </body>
 </html>
