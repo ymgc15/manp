@@ -61,8 +61,10 @@
         print '<br>';
       }
 
-      // 修正ボタンと削除ボタンを表示
-      // nameに「edit」」「delete」を追加することで、飛び先(staff_branch.php)で、どのボタンが押された区別出来るようになる
+      // 参照ボタン、追加ボタン、修正ボタン、削除ボタンを表示
+      // nameに「disp」「add」「edit」」「delete」を追加することで、飛び先(staff_branch.php)で、どのボタンが押された区別出来るようになる
+      print '<input type = "submit" name = "disp" value = "参照">';
+      print '<input type = "submit" name = "add" value = "追加">';
       print '<input type = "submit" name = "edit" value = "修正">';
       print '<input type = "submit" name = "delete" value = "削除">';
       print '</form>';
