@@ -42,8 +42,8 @@
 
       print 'スタッフ一覧<br><br>';
 
-      // 修正画面に飛ぶ
-      print '<form method = "post" action = "staff_edit.php">';
+      // 分岐画面に飛ぶ
+      print '<form method = "post" action = "staff_branch.php">';
 
       // スタッフの名前を$stmtから1レコードずつ取り出しながら表示。レコードがなくなったらループから脱出
       while(true) {
@@ -61,8 +61,10 @@
         print '<br>';
       }
 
-      // 修正ボタンを表示
-      print '<input type = "submit" value = "修正">';
+      // 修正ボタンと削除ボタンを表示
+      // nameに「edit」」「delete」を追加することで、飛び先(staff_branch.php)で、どのボタンが押された区別出来るようになる
+      print '<input type = "submit" name = "edit" value = "修正">';
+      print '<input type = "submit" name = "delete" value = "削除">';
       print '</form>';
     }
 
