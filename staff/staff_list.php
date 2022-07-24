@@ -23,6 +23,9 @@
       $user = 'root';
       $password = 'root';
       $dbh = new PDO($dsn,$user,$password);
+      // setAttribute 接続オプション
+      // PDO::ATTR_ERRMODE エラーの通知方法
+      // PDO::ERRMODE_EXCEPTION 例外を発生 (PDO::ATTR_ERRMODEの既定値)
       $dbh -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
       // SELECT文 「mst_staffテーブルからスタッフコードと、nameカラムとのデータ(つまりスタッフ名)を全部ください」という指令

@@ -31,6 +31,9 @@
       $user = 'root';
       $password = 'root';
       $dbh = new PDO($dsn,$user,$password);
+      // setAttribute 接続オプション
+      // PDO::ATTR_ERRMODE エラーの通知方法
+      // PDO::ERRMODE_EXCEPTION 例外を発生 (PDO::ATTR_ERRMODEの既定値)
       $dbh -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
       // SQL文を使ってレコード(テーブルの横方向の行のこと)を追加 ②
