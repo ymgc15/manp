@@ -20,6 +20,8 @@
       // 商品名と価格データを受け取る
       $pro_name = $_POST['name'];
       $pro_price = $_POST['price'];
+      // 画像のファイル名を$_POSTで受け取る
+      $pro_gazou_name = $_POST['gazou_name'];
 
       // 以下の変数に安全対策(エスケープ処理)を施す
       $pro_name = htmlspecialchars($pro_name,ENT_QUOTES,'UTF-8');
@@ -38,12 +40,15 @@
 
       // SQL文を使ってレコード(テーブルの横方向の行のこと)を追加 ②
       // 以下は「プリペアードステートメント」と呼ばれる方式
-      // ＊エラーメモ＊ gazouカラムのデフォルト値が無い →　gazouカラム削除したら解決した
-      $sql = 'INSERT INTO mst_product(name,price) VALUES(?,?)';
+      // (＊エラーメモ＊ gazouカラムのデフォルト値が無い →　gazouカラム削除したら解決した)
+      // VALUES(?,?) を (?,?,?) に変更。画像ファイル名もデータベースに格納するようにした (データベースのgazouカラムに、画像のファイル名を格納するプログラムを追加)
+      // データベースには”画像そのもの”ではなくて、画像のファイル名だけを格納しておく。(画像ファイル本体は、[gazou]フォルダの中にあるため)
+      $sql = 'INSERT INTO mst_product(name,price,gazou) VALUES(?,?,?)';
       $stmt = $dbh -> prepare($sql);
       // 「?」にセットしたいデータが入っている変数を順番に入力
       $data[] = $pro_name;
       $data[] = $pro_price;
+      $data[] = $pro_gazou_name;
       $stmt -> execute($data);
 
       // データベースから切断 ③
