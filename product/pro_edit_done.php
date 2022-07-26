@@ -17,11 +17,13 @@
     // ②データベースエンジンにSQL文で指令を出す
     // ③データベースから切断する
     try {
-      // 商品名と価格データを受け取る
+      // 商品コードと商品名、価格データを受け取る
+      $pro_code = $_POST['code'];
       $pro_name = $_POST['name'];
       $pro_price = $_POST['price'];
 
       // 以下の変数に安全対策(エスケープ処理)を施す
+      $pro_code = htmlspecialchars($pro_code,ENT_QUOTES,'UTF-8');
       $pro_name = htmlspecialchars($pro_name,ENT_QUOTES,'UTF-8');
       $pro_price = htmlspecialchars($pro_price,ENT_QUOTES,'UTF-8');
 
@@ -39,19 +41,19 @@
       // SQL文を使ってレコード(テーブルの横方向の行のこと)を追加 ②
       // 以下は「プリペアードステートメント」と呼ばれる方式
       // ＊エラーメモ＊ gazouカラムのデフォルト値が無い →　gazouカラム削除したら解決した
-      $sql = 'INSERT INTO mst_product(name,price) VALUES(?,?)';
+      $sql = 'UPDATE mst_product SET name = ?,price = ? WHERE code = ?';
       $stmt = $dbh -> prepare($sql);
       // 「?」にセットしたいデータが入っている変数を順番に入力
       $data[] = $pro_name;
       $data[] = $pro_price;
+      $data[] = $pro_code;
       $stmt -> execute($data);
 
       // データベースから切断 ③
       $dbh = null;
 
       // データベースサーバーが正常に動いていれば以下のコードが実行される
-      print $pro_name;
-      print 'を追加しました。<br>';
+      print '修正しました。<br>';
     }
 
     // catch (例外が発生するかもしれない例外の種類 例外を受け取る変数名)

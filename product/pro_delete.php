@@ -17,13 +17,9 @@
     // ②データベースエンジンにSQL文で指令を出す
     // ③データベースから切断する
     try {
-      // 商品名と価格データを受け取る
-      $pro_name = $_POST['name'];
-      $pro_price = $_POST['price'];
-
-      // 以下の変数に安全対策(エスケープ処理)を施す
-      $pro_name = htmlspecialchars($pro_name,ENT_QUOTES,'UTF-8');
-      $pro_price = htmlspecialchars($pro_price,ENT_QUOTES,'UTF-8');
+      // 商品コードを受け取る (そのコードの商品データを修正するため)
+      // テキストボックスからの入力ではないため、あえて安全対策はしない。
+      $pro_code = $_GET['procode'];
 
       // データベースに接続 ①
       // 'mysql:~utf8'のシングルクォーテーションで括った中には、一切スペースを入れないこと
@@ -36,36 +32,46 @@
       // PDO::ERRMODE_EXCEPTION 例外を発生 (PDO::ATTR_ERRMODEの既定値)
       $dbh -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-      // SQL文を使ってレコード(テーブルの横方向の行のこと)を追加 ②
+      // SQL文を使って、その商品コードのデータをデータベースから取得 ②
       // 以下は「プリペアードステートメント」と呼ばれる方式
-      // ＊エラーメモ＊ gazouカラムのデフォルト値が無い →　gazouカラム削除したら解決した
-      $sql = 'INSERT INTO mst_product(name,price) VALUES(?,?)';
+      // 商品コードで絞り込んでいて、1件のレコードに絞り込まれるため、この後whileループで回すようなことはしない
+      $sql = 'SELECT name FROM mst_product WHERE code = ?';
       $stmt = $dbh -> prepare($sql);
-      // 「?」にセットしたいデータが入っている変数を順番に入力
-      $data[] = $pro_name;
-      $data[] = $pro_price;
+      $data[] = $pro_code;
       $stmt -> execute($data);
+
+      $rec = $stmt -> fetch(PDO::FETCH_ASSOC);
+      // 商品名を変数にコピー。この後使用する
+      $pro_name = $rec['name'];
 
       // データベースから切断 ③
       $dbh = null;
 
-      // データベースサーバーが正常に動いていれば以下のコードが実行される
-      print $pro_name;
-      print 'を追加しました。<br>';
     }
 
-    // catch (例外が発生するかもしれない例外の種類 例外を受け取る変数名)
-    catch (Exception $e) {
-      // データベースサーバーに障害が発生したら以下のコードが実行される
+    catch(Exception $e) {
       print 'ただいま障害により大変ご迷惑をお掛けしております。';
-      // 強制終了の命令
       exit();
     }
 
   ?>
 
-  <!-- この先に作る商品一覧画面(product/pro_list.php)のリンク先 -->
-  <a href="pro_list.php">戻る</a>
+  商品削除<br>
+  <br>
+  商品コード<br>
+  <?php print $pro_code; ?>
+  <br>
+  商品名<br>
+  <?php print $pro_name; ?>
+  <br>
+  この商品を削除してよろしいですか？<br>
+  <br>
+
+  <form method="post" action="pro_delete_done.php">
+    <input type="hidden" name="code" value="<?php print $pro_code; ?>">
+    <input type="button" onclick = "history.back()" value="戻る">
+    <input type="submit" value="ＯＫ">
+  </form>
 
 </body>
 </html>
