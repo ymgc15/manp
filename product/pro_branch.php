@@ -44,7 +44,7 @@
     }
 
     // URLパラメータで商品コードを渡せるようにする
-    $staff_code = $_POST['procode'];
+    $pro_code = $_POST['procode'];
     // 飛び元のプログラム
     // Location内の?以降が「URLパラメータ」と呼ばれるもの。GET方式で読み取ることが出来る
     header('Location:pro_edit.php?procode='.$pro_code);
