@@ -39,7 +39,7 @@
       // SQL文を使って、その商品コードのデータをデータベースから取得 ②
       // 以下は「プリペアードステートメント」と呼ばれる方式
       // 商品コードで絞り込んでいて、1件のレコードに絞り込まれるため、この後whileループで回すようなことはしない
-      $sql = 'SELECT name,price FROM mst_product WHERE code = ?';
+      $sql = 'SELECT name,price,gazou FROM mst_product WHERE code = ?';
       $stmt = $dbh -> prepare($sql);
       $data[] = $pro_code;
       $stmt -> execute($data);
@@ -48,6 +48,7 @@
       // 商品名を変数にコピー。この後使用する
       $pro_name = $rec['name'];
       $pro_price = $rec['price'];
+      $pro_gazou_name = $rec['gazou'];
 
       // データベースから切断 ③
       $dbh = null;
@@ -57,6 +58,13 @@
     catch(Exception $e) {
       print 'ただいま障害により大変ご迷惑をお掛けしております。';
       exit();
+    }
+
+    // もし画像ファイルが無ければ画像を表示するHTMLタグを作らず、画像があるときだけ、その画像を表示するHTMタグを$disp_gazouに作るようにしている
+    if($pro_gazou_name == '') {
+      $disp_gazou = '';
+    } else {
+      $disp_gazou = '<img src="./gazou/'.$pro_gazou_name.'">';
     }
 
   ?>
@@ -71,6 +79,9 @@
   <br>
   価格<br>
   <?php print $pro_price; ?>円
+  <br>
+  <!-- 画像を表示する。もし画像がなければ何も表示されない -->
+  <?php print $disp_gazou; ?>
   <br>
   <br>
 
