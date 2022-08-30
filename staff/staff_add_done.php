@@ -38,11 +38,14 @@
 
       // SQL文を使ってレコード(テーブルの横方向の行のこと)を追加 ②
       // 以下は「プリペアードステートメント」と呼ばれる方式
+      // このSQL文（'INSERT ... VALUE(?,?)'）を変数「$sql」にコピー
       $sql = 'INSERT INTO mst_staff(name,password) VALUES(?,?)';
+      // 準備する命令
       $stmt = $dbh -> prepare($sql);
       // 「?」にセットしたいデータが入っている変数を順番に入力
       $data[] = $staff_name;
       $data[] = $staff_pass;
+      // SQL文で指令を出すための命令
       $stmt -> execute($data);
 
       // データベースから切断 ③
