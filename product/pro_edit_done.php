@@ -17,10 +17,12 @@
     // ②データベースエンジンにSQL文で指令を出す
     // ③データベースから切断する
     try {
-      // 商品コードと商品名、価格データを受け取る
+      // 商品コードと商品名、価格データ、古い画像、最新の画像を受け取る
       $pro_code = $_POST['code'];
       $pro_name = $_POST['name'];
       $pro_price = $_POST['price'];
+      $pro_gazou_name_old = $_POST['gazou_name_old'];
+      $pro_gazou_name = $_POST['gazou_name'];
 
       // 以下の変数に安全対策(エスケープ処理)を施す
       $pro_code = htmlspecialchars($pro_code,ENT_QUOTES,'UTF-8');
@@ -40,17 +42,26 @@
 
       // SQL文を使ってレコード(テーブルの横方向の行のこと)を追加 ②
       // 以下は「プリペアードステートメント」と呼ばれる方式
-      // ＊エラーメモ＊ gazouカラムのデフォルト値が無い →　gazouカラム削除したら解決した
-      $sql = 'UPDATE mst_product SET name = ?,price = ? WHERE code = ?';
+      // ＊エラーメモ＊ gazouカラムのデフォルト値が無い → gazouカラム削除したら解決した
+      $sql = 'UPDATE mst_product SET name = ?,price = ?,gazou = ? WHERE code = ?';
       $stmt = $dbh -> prepare($sql);
       // 「?」にセットしたいデータが入っている変数を順番に入力
       $data[] = $pro_name;
       $data[] = $pro_price;
+      $data[] = $pro_gazou_name;
       $data[] = $pro_code;
       $stmt -> execute($data);
 
       // データベースから切断 ③
       $dbh = null;
+
+      // もし今の画像と新しい画像が異なっていたら削除する、同じだったら何もしない
+      if($pro_gazou_name_old != $pro_gazou_name) {
+        // もし古い画像があれば削除する
+        if($pro_gazou_name_old != '') {
+          unlink('./gazou/'.$pro_gazou_name_old);
+        }
+      }
 
       // データベースサーバーが正常に動いていれば以下のコードが実行される
       print '修正しました。<br>';

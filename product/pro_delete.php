@@ -35,7 +35,7 @@
       // SQL文を使って、その商品コードのデータをデータベースから取得 ②
       // 以下は「プリペアードステートメント」と呼ばれる方式
       // 商品コードで絞り込んでいて、1件のレコードに絞り込まれるため、この後whileループで回すようなことはしない
-      $sql = 'SELECT name FROM mst_product WHERE code = ?';
+      $sql = 'SELECT name,gazou FROM mst_product WHERE code = ?';
       $stmt = $dbh -> prepare($sql);
       $data[] = $pro_code;
       $stmt -> execute($data);
@@ -43,9 +43,16 @@
       $rec = $stmt -> fetch(PDO::FETCH_ASSOC);
       // 商品名を変数にコピー。この後使用する
       $pro_name = $rec['name'];
+      $pro_gazou_name = $rec['gazou'];
 
       // データベースから切断 ③
       $dbh = null;
+
+      if($pro_gazou_name == '') {
+        $disp_gazou = '';
+      } else {
+        $disp_gazou = '<img src="./gazou/'.$pro_gazou_name.'">';
+      }
 
     }
 
@@ -64,11 +71,15 @@
   商品名<br>
   <?php print $pro_name; ?>
   <br>
+  <?php print $disp_gazou; ?>
+  <br>
   この商品を削除してよろしいですか？<br>
   <br>
 
   <form method="post" action="pro_delete_done.php">
     <input type="hidden" name="code" value="<?php print $pro_code; ?>">
+    <!-- 次の画面で実際に画像ファイルを削除するために、hiddenで画像ファイル名を渡してあげる -->
+    <input type="hidden" name="gazou_name" value="<?php print $pro_gazou_name; ?>">
     <input type="button" onclick = "history.back()" value="戻る">
     <input type="submit" value="ＯＫ">
   </form>

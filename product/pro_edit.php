@@ -53,20 +53,19 @@
       // データベースから切断 ③
       $dbh = null;
 
+      // もし古い修正前の画像ファイルが無ければ画像を表示するHTMLタグを作らず、画像があるときだけ、その画像を表示するHTMタグを$disp_gazouに作るようにしている
+      if($pro_gazou_name_old == '') {
+      $disp_gazou = '';
+      } else {
+      $disp_gazou='<img src="./gazou/'.$pro_gazou_name_old.'">';
+      }
+
     }
 
     catch(Exception $e) {
       print 'ただいま障害により大変ご迷惑をお掛けしております。';
       exit();
     }
-
-    // もし古い修正前の画像ファイルが無ければ画像を表示するHTMLタグを作らず、画像があるときだけ、その画像を表示するHTMタグを$disp_gazouに作るようにしている
-    if($pro_gazou_name_old == '') {
-      $disp_gazou = '';
-    } else {
-      $disp_gazou='<img src="./gazou/'.$pro_gazou_name_old.'">';
-    }
-
 
   ?>
 
@@ -78,7 +77,7 @@
   <br>
 
   <!-- enctype="multipart/form-data"を忘れると、次の画面で画像の情報を受け取ることが出来なくなる -->
-  <form method="post" action="pro_edit_check.php" enctype="multtipart/from-data">
+  <form method="post" action="pro_edit_check.php" enctype="multipart/form-data">
     <input type="hidden" name="code" value="<?php print $pro_code; ?>">
     <!-- この行の追加が後でとても重要になる -->
     <!-- oldとしたのは、画像の入れ替えを行うと、それまでの画像は古くなるから(後で削除される) -->

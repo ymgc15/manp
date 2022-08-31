@@ -19,6 +19,7 @@
     try {
       // 商品コードを受け取る
       $pro_code = $_POST['code'];
+      $pro_gazou_name = $_POST['gazou_name'];
 
       // データベースに接続 ①
       // 'mysql:~utf8'のシングルクォーテーションで括った中には、一切スペースを入れないこと
@@ -43,6 +44,11 @@
 
       // データベースから切断 ③
       $dbh = null;
+
+      // 画像が存在する場合だけ削除
+      if($pro_gazou_name != '') {
+        unlink('./gazou/'.$pro_gazou_name);
+      }
 
     }
 
